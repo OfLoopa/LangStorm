@@ -3,7 +3,26 @@ version: '3.9'
 
 services:
   db:
-    image:
+    image: postgres
+    environment:
+      POSTGRES_DB: "LangStorm"
+      POSTGRES_USER: "admin"
+      POSTGRES_PASSWORD: "admin"
+    ports:
+      - 5432:5432
+
+  server:
+    image: langstorm-backend-django
+    build:
+      context: ../src/server/
+      dockerfile: ../../docker/backend/Dockerfile
+    ports:
+      - 9090:8080
 
   app:
-    image:
+    image: langstorm-frontend-django
+    build:
+      context: ../src/frontend/
+      dockerfile: ../../docker/frontend/Dockerfile
+    ports:
+      - 7000:3000
