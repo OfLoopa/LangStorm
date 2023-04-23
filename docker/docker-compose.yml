@@ -12,7 +12,9 @@ services:
       - 5432:5432
 
   server:
-    image: langstorm-backend-django
+    image: langstorm-backend
+    environment:
+      DB_HOST: "db"
     build:
       context: ../src/server/
       dockerfile: ../../docker/backend/Dockerfile
@@ -20,7 +22,7 @@ services:
       - 9090:8080
 
   app:
-    image: langstorm-frontend-django
+    image: langstorm-frontend
     build:
       context: ../src/frontend/
       dockerfile: ../../docker/frontend/Dockerfile
