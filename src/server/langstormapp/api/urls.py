@@ -4,6 +4,8 @@ from . import views
 
 urlpatterns = [
     path('', views.getRoutes, name="routes"),
-    # path('notes/', views.getNotes, name="notes"),
-    # path('notes/<str:pk>/', views.getNote, name="note"),
+    path('words/', views.getWords, name="words"),
+    path('words/<str:pk>/', views.getWord, name="word"),
+    path('lessons/', views.getLessons, name='lessons'),
+    path('lessons/<str:pk>/', views.getLesson, name='lesson'),
 ]

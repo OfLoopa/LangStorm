@@ -20,6 +20,8 @@ services:
       dockerfile: ../../docker/backend/Dockerfile
     ports:
       - 9090:8080
+    depends_on:
+      - db
 
   app:
     image: langstorm-frontend
@@ -28,3 +30,5 @@ services:
       dockerfile: ../../docker/frontend/Dockerfile
     ports:
       - 7000:3000
+    depends_on:
+      - server
