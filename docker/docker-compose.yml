@@ -8,6 +8,9 @@ services:
       POSTGRES_DB: "LangStorm"
       POSTGRES_USER: "admin"
       POSTGRES_PASSWORD: "admin"
+#      POSTGRES_HOST_AUTH_METHOD: "trust"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
     ports:
       - 5432:5432
 
@@ -32,3 +35,6 @@ services:
       - 7000:3000
     depends_on:
       - server
+
+volumes:
+  postgres_data:

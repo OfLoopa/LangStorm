@@ -19,7 +19,12 @@ def getRoutes(request):
         {
             'Endpoint': '/words/',
             'method': 'POST',
-            'body': {'body': ''},
+            'body': {
+                'english_writing': '',
+                'translation': '',
+                'transcription': '',
+                'example': '',
+            },
             'description': 'Create a new word card',
         },
         {
@@ -31,7 +36,12 @@ def getRoutes(request):
         {
             'Endpoint': '/words/id',
             'method': 'PUT',
-            'body': {'body': ''},
+            'body': {
+                'english_writing': '',
+                'translation': '',
+                'transcription': '',
+                'example': '',
+            },
             'description': 'Update information in a word\'s card',
         },
         {
@@ -40,6 +50,7 @@ def getRoutes(request):
             'body': None,
             'description': 'Delete card with a word',
         },
+
         {
             'Endpoint': '/lessons/',
             'method': 'GET',
@@ -49,7 +60,19 @@ def getRoutes(request):
         {
             'Endpoint': '/lessons/',
             'method': 'POST',
-            'body': {'body': ''},
+            'body': {
+                'lesson': {
+                    'summary': ''
+                },
+                'words': [
+                    {
+                        'english_writing': '',
+                        'translation': '',
+                        'transcription': '',
+                        'example': ''
+                    }
+                ]
+            },
             'description': 'Create a new lesson record',
         },
         {
@@ -61,7 +84,19 @@ def getRoutes(request):
         {
             'Endpoint': '/lessons/id',
             'method': 'PUT',
-            'body': {'body': ''},
+            'body': {
+                'lesson': {
+                    'summary': ''
+                },
+                'words': [
+                    {
+                        'english_writing': '',
+                        'translation': '',
+                        'transcription': '',
+                        'example': ''
+                    }
+                ]
+            },
             'description': 'Update information in a lesson\'s card',
         },
         {
@@ -79,7 +114,7 @@ def getRoutes(request):
 def getWords(request):
 
     if request.method == 'GET':
-        return getWordsList(request)
+        return getWordsList()
 
     if request.method == 'POST':
         return createWord(request)
@@ -89,13 +124,13 @@ def getWords(request):
 def getWord(request, pk):
 
     if request.method == 'GET':
-        return getWordCard(request, pk)
+        return getWordCard(request)
 
     if request.method == 'PUT':
         return updateWord(request, pk)
 
     if request.method == 'DELETE':
-        return deleteWord(request, pk)
+        return deleteWord(request)
 
 
 @api_view(['GET', 'POST'])

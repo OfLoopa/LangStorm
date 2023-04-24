@@ -1,7 +1,7 @@
 from django.contrib import admin
-from .models import Word, DictionaryRecord, Lesson
+from .models import Word, Dictionary, Lesson
 
 admin.site.register(Word)
-admin.site.register(DictionaryRecord)
+admin.site.register(Dictionary)
 admin.site.register(Lesson)
 

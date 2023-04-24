@@ -87,7 +87,7 @@ DATABASES = {
         'NAME': 'LangStorm',
         'USER': 'admin',
         'PASSWORD': 'admin',
-        'HOST': os.environ.get('DB_HOST'),
+        'HOST': os.environ.get('DB_HOST') if os.environ.get('DB_HOST') is not None else 'localhost',
         'PORT': '5432',
     }
 }
