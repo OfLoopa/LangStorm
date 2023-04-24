@@ -1,59 +1,116 @@
-from rest_framework.response import Response
+from django.db.models import QuerySet
+
 from .models import Word, Dictionary, DictionaryRecord, Lesson
 from .serializer import WordSerializer, DictionarySerializer, DictionaryRecordSerializer, LessonSerializer
 
 
-# Words
+# Word
+def getWordsList() -> QuerySet:
+    """
+    Get all words
 
-def getWordsList():
+    :return: QuerySet
+    """
     words = Word.objects.all()
-    serializer = WordSerializer(words, many=True)
-    return Response(serializer.data)
+    return words
 
 
-def createWord(request):
-    data = request.data
-    word = Word.objects.create(
-        english_writing=data['english_writing'],
-        translation=data["translation"],
-        transcription=data["transcription"],
-        example=data["example"]
+def createWord(word: dict) -> QuerySet:
+    """
+    Write new word into db
+
+    :param word: dict with structure
+    {
+        "english_writing": "",
+        "translation": "",
+        "transcription": "",
+        "example": ""
+    }
+    :return: QuerySet
+    """
+    new_word = Word.objects.create(
+        english_writing=word['english_writing'],
+        translation=word["translation"],
+        transcription=word["transcription"],
+        example=word["example"]
     )
-    serializer = WordSerializer(word, many=False)
-    return Response(serializer.data)
+    return new_word
 
 
-def getWordCard(pk):
+def getWordCard(pk: int) -> QuerySet:
+    """
+    Get word from database by its id
+
+    :param pk: word's primary key
+    :return: QuerySet
+    """
     word = Word.objects.get(id=pk)
-    serializer = WordSerializer(word, many=False)
-    return Response(serializer.data)
+    return word
 
 
-def updateWord(request, pk):
-    data = request.data
+def updateWord(new_word: dict, pk: int) -> QuerySet:
+    """
+    Update word with given id
+
+    :param new_word: dict with structure
+    {
+        "english_writing": "",
+        "translation": "",
+        "transcription": "",
+        "example": ""
+    }
+    :param pk: word's primary key
+    :return: QuerySet
+    """
     word = Word.objects.get(id=pk)
-    serializer = WordSerializer(instance=word, data=data)
+    serializer = WordSerializer(instance=word, data=new_word)
 
     if serializer.is_valid():
         serializer.save()
 
-    return Response(serializer.data)
+    return Word.objects.get(id=pk)
 
 
-def deleteWord(pk):
+def deleteWord(pk: int) -> None:
+    """
+    Delete word by id
+
+    :param pk: word's primary key
+    """
     word = Word.objects.get(id=pk)
     word.delete()
-    return Response('Word was deleted!')
 
 
-# Dictionary (Inner Instance)
+# Dictionary
 
-def getDictionariesList():
+def getDictionariesList() -> QuerySet:
+    """
+    Get list of all dictionaries
+
+    :return: QuerySet
+    """
     dictionaries = Dictionary.objects.all()
     return dictionaries
 
 
-def createDictionary(lesson: Lesson | None, words: dict | None):
+def getDictionaryInstance(pk: int) -> QuerySet:
+    """
+    Get Dictionary model object by id
+
+    :param pk: dictionary's primary key
+    :return: QuerySet
+    """
+    dictionary = Dictionary.objects.get(id=pk)
+    return dictionary
+
+
+def createDictionary(lesson: Lesson | None = None) -> QuerySet:
+    """
+    Create a new empty dictionary. Can be bind initially to a lesson
+
+    :param lesson: Lesson model object
+    :return: QuerySet
+    """
     if lesson is not None:
         dictionary = Dictionary.objects.create(
             lesson=lesson
@@ -63,121 +120,190 @@ def createDictionary(lesson: Lesson | None, words: dict | None):
             lesson=""
         )
 
-    if words is not None:
-        for word in words:
-            word = Word.objects.create(
-                english_writing=word['english_writing'],
-                translation=word["translation"],
-                transcription=word["transcription"],
-                example=word["example"]
-            )
-            dict_record = DictionaryRecord.objects.create(
-                dictionary=dictionary,
-                word=word
-            )
-
-    dict_records = list(
-            DictionaryRecord.objects.all().filter(dictionary=dictionary)
-        )
-
-    return dictionary, dict_records
+    return dictionary
 
 
-def getDictionary(pk):
+def bindDictionary(dictionary: Dictionary, lesson: Lesson) -> QuerySet:
+    """
+    Bind dictionary to given lesson
+
+    :param dictionary: Dictionary model object
+    :param lesson: Lesson object model
+    :return: QuerySet
+    """
+    serializer = DictionarySerializer(instance=dictionary, data={"lesson": lesson})
+
+    if serializer.is_valid():
+        serializer.save()
+
+    return getDictionaryInstance(dictionary.id)
+
+
+def getDictionary(pk: int) -> dict[str, dict | list]:
+    """
+    Get dictionary with it id and list of words in it
+
+    :param pk:
+    :return: JSON-like object
+    {
+        "dict_info": {"id": 0, "lesson_id: ""};
+        "words": [{
+            "english_writing": "",
+            "translation": "",
+            "transcription": "",
+            "example": ""
+        }]
+    }
+    """
     dictionary = Dictionary.objects.get(id=pk)
     dict_words = [
-        WordSerializer(
-            lesson_word.word, many=False
-        ).data for lesson_word in list(
-            DictionaryRecord.objects.all().filter(dictionary=dictionary)
+        Word.objects.get(
+            id=word_record.id
+        ) for word_record in list(
+            DictionaryRecord.objects.all().filter(
+                dictionary=dictionary
+            )
         )
     ]
 
-    dict_serializer = DictionarySerializer(dictionary, many=False)
-
-    return
+    return {"dict_info": DictionarySerializer(dictionary, many=False).data, "words": dict_words}
 
 
-def addWordToDictionary(dictionary: Dictionary, word: dict):
+def addWordToDictionary(new_word: dict, dict_pk: int) -> QuerySet:
+    """
+    Add new word to word's cards and dictionary with given id
+
+    :param new_word: dict with structure
+    {
+        "english_writing": "",
+        "translation": "",
+        "transcription": "",
+        "example": ""
+    }
+    :param dict_pk: dictionary's primary key
+    :return: QuerySet with record in dictionary
+    """
+    dictionary = Dictionary.objects.get(id=dict_pk)
     word = Word.objects.create(
-        english_writing=word['english_writing'],
-        translation=word["translation"],
-        transcription=word["transcription"],
-        example=word["example"]
+        english_writing=new_word['english_writing'],
+        translation=new_word["translation"],
+        transcription=new_word["transcription"],
+        example=new_word["example"]
     )
     dict_word = DictionaryRecord.objects.create(
         dictionary=dictionary,
         word=word
     )
 
-    return Response(DictionaryRecordSerializer(dict_word, many=False).data)
+    return dict_word
 
 
-def deleteWordDictionary(pk):
-    word = Word.objects.get(id=pk)
-    dict_word = DictionaryRecord.objects.get(word=word)
+def deleteWordFromDictionary(dict_pk: int, word_pk: int) -> None:
+    """
+    Delete word with given id from dictionary
+
+    :param dict_pk: dictionary's primary key
+    :param word_pk: word's primary key
+    """
+    word = Word.objects.get(id=word_pk)
+    dictionary = Dictionary.objects.get(id=dict_pk)
+    dict_word = DictionaryRecord.objects.get(word=word, dictionary=dictionary)
     dict_word.delete()
-    return Response('Word from dictionary was deleted!')
+
+    # delete empty dictionary:
+
+    # dict_records = list(DictionaryRecord.objects.all().filter(dictionary=dictionary))
+    # if len(dict_records) == 0:
+    #     dictionary.delete()
 
 
-def deleteDictionary(pk):
+def deleteDictionary(pk: int) -> None:
+    """
+    Delete dictionary
+
+    :param pk: dictionary's primary key
+    """
     dictionary = Dictionary.objects.get(id=pk)
     dictionary_records = DictionaryRecord.objects.all().filter(dictionary=dictionary)
     for record in dictionary_records:
         record.delete()
     dictionary.delete()
-    return Response('Dictionary was deleted!')
 
 
 # Lessons
 
-def getLessonsList():
+def getLessonsList() -> QuerySet:
+    """
+    Get list of lessons
+
+    :return: QuerySet
+    """
     lessons = Lesson.objects.all()
-    serializer = LessonSerializer(lessons, many=True)
-    return Response(serializer.data)
+    return lessons
 
 
-def createLesson(request):
-    data = request.data
+def getLessonInstance(pk: int) -> QuerySet:
+    """
+    Get Lesson model object by id
+
+    :param pk: lesson's primary key
+    :return: QuerySet
+    """
+    lesson = Lesson.objects.all().filter(id=pk)
+    return lesson
+
+
+def createLesson(summary: str, dictionary: Dictionary | None = None) -> QuerySet:
+    """
+    Create new lesson, optional with dictionary
+
+    :param summary: lesson's summary
+    :param dictionary: lesson's dictionary, default to None
+    :return: QuerySet
+    """
     lesson = Lesson.objects.create(
-        summary=data["lesson"]["summary"]
+        summary=summary
     )
-    if 'words' in data.keys():
-        createDictionary(lesson, data["words"])
-    else:
-        createDictionary(lesson, None)
+    if dictionary is not None:
+        bindDictionary(dictionary, lesson)
 
-    serializer = LessonSerializer(lesson, many=False)
-    return Response(serializer.data)
+    return lesson
 
 
-def getLessonDetail(request, pk):
+def getLesson(pk: int) -> dict[str, dict]:
+    """
+    Get Lesson JSON with info and dictionary
+
+    :param pk: lesson's primary key
+    :return: JSON-like object
+    {"lesson":
+        {"id": 0, "summary": ""},
+    "dictionary":
+        {"dict_info":
+            {"id": 0, "lesson_id: ""},
+        "words":
+            [{"english_writing": "",
+            "translation": "",
+            "transcription": "",
+            "example": ""}]
+        }
+    }
+    """
+    lesson = getLessonInstance(pk)
+
+    dictionary = Dictionary.objects.get(lesson=lesson)
+    lesson_dict = getDictionary(dictionary.id)
+
+    return {"lesson": LessonSerializer(lesson, many=False).data, "dictionary": lesson_dict}
+
+
+def deleteLesson(pk: int) -> None:
+    """
+    Delete lesson by id with dictionary
+
+    :param pk: lesson's primary key
+    """
     lesson = Lesson.objects.get(id=pk)
-    lesson_serializer = LessonSerializer(lesson, many=False)
-
-    lesson_dict = [
-        WordSerializer(
-            lesson_word.word, many=False
-        ).data for lesson_word in list(
-            Dictionary.objects.all().filter(lesson=lesson)
-        )
-    ]
-
-    return Response({"lesson": lesson_serializer.data, "words": lesson_dict})
-
-
-def updateLesson(request, pk):
-    data = request.data
-    lesson = Lesson.objects.get(id=pk)
-    lesson_serializer = WordSerializer(instance=lesson, data=data["lesson"])
-
-    if lesson_serializer.is_valid():
-        lesson_serializer.save()
-
-    return Response({"lesson": lesson_serializer.data, "words": lesson_dict})
-
-
-def deleteLesson(request, pk):
-    lesson = Lesson.objects.get(id=pk)
+    dictionary = Dictionary.objects.get(lesson=lesson)
+    deleteDictionary(dictionary.id)
     lesson.delete()
-    return Response('Lesson was deleted!')

@@ -1,9 +1,11 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .utils import (
-    getWordsList, createWord, getWordCard,
-    updateWord, deleteWord, getLessonsList,
-    createLesson, getLessonDetail, updateLesson, deleteLesson
+from .utils_api import (
+    getWordsListAPI, createWordAPI, getWordCardAPI,
+    updateWordAPI, deleteWordAPI, getDictionariesListAPI, createDictionaryAPI,
+    getDictionaryAPI, addWordToDictionaryAPI, deleteWordFromDictionaryAPI,
+    bindDictionaryAPI, deleteDictionaryAPI,
+    getLessonsListAPI, createLessonAPI, getLessonDetailAPI, deleteLessonAPI
 )
 
 
@@ -49,6 +51,58 @@ def getRoutes(request):
             'method': 'DELETE',
             'body': None,
             'description': 'Delete card with a word',
+        },
+
+        {
+            'Endpoint': '/dictionaries/',
+            'method': 'GET',
+            'body': None,
+            'description': 'Returns an array of all dictionary instances',
+        },
+        {
+            'Endpoint': '/dictionaries/',
+            'method': 'POST',
+            'body': {'lesson_id': ''},
+            'description': 'Create empty dictionary. If body is not empty - bind it to lesson by id',
+        },
+        {
+            'Endpoint': '/dictionaries/id',
+            'method': 'GET',
+            'body': None,
+            'description': 'Get dictionary with words',
+        },
+        {
+            'Endpoint': '/dictionaries/id',
+            'method': 'PUT',
+            'body': {
+                'add word': {
+                    'dict_id': '',
+                    'word': {
+                        'english_writing': '',
+                        'translation': '',
+                        'transcription': '',
+                        'example': '',
+                    }
+                },
+                'delete word': {
+                    'dict_id': '',
+                    'word_id': ''
+                },
+                'bind lesson': {
+                    'dict_id': '',
+                    'lesson_id': '',
+                }
+            },
+            'description': 'Update dictionary. '
+                           'To add words use body "Add word". '
+                           'To delete word use body "Delete word".'
+                           'To bind lesson to dictionary use body "Bind lesson"',
+        },
+        {
+            'Endpoint': '/dictionaries/id',
+            'method': 'DELETE',
+            'body': None,
+            'description': 'Delete dictionary',
         },
 
         {
@@ -114,43 +168,68 @@ def getRoutes(request):
 def getWords(request):
 
     if request.method == 'GET':
-        return getWordsList()
+        return getWordsListAPI()
 
     if request.method == 'POST':
-        return createWord(request)
+        return createWordAPI(request)
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def getWord(request, pk):
 
     if request.method == 'GET':
-        return getWordCard(request)
+        return getWordCardAPI(pk)
 
     if request.method == 'PUT':
-        return updateWord(request, pk)
+        return updateWordAPI(request, pk)
 
     if request.method == 'DELETE':
-        return deleteWord(request)
+        return deleteWordAPI(pk)
+
+
+@api_view(['GET', 'POST'])
+def getDictionaries(request):
+
+    if request.method == 'GET':
+        return getDictionariesListAPI()
+
+    if request.method == 'POST':
+        return createDictionaryAPI(request)
+
+
+@api_view(['GET', 'PUT', 'DELETE'])
+def getDictionary(request, pk):
+
+    if request.method == 'GET':
+        return getDictionaryAPI(pk)
+
+    if request.method == 'PUT':
+        if 'word' in request.data.keys():
+            return addWordToDictionaryAPI(request)
+        elif 'word_id' in request.data.keys():
+            return deleteWordFromDictionaryAPI(request)
+        elif 'lesson_id' in request.data.keys():
+            return bindDictionaryAPI(request)
+
+    if request.method == 'DELETE':
+        return deleteDictionaryAPI(pk)
 
 
 @api_view(['GET', 'POST'])
 def getLessons(request):
 
     if request.method == 'GET':
-        return getLessonsList(request)
+        return getLessonsListAPI()
 
     if request.method == 'POST':
         return createLesson(request)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
-def getLesson(request, pk):
+@api_view(['GET', 'DELETE'])
+def getLesson(request):
 
     if request.method == 'GET':
-        return getLessonDetail(request, pk)
-
-    if request.method == 'PUT':
-        return updateLesson(request, pk)
+        return getLessonDetail(request)
 
     if request.method == 'DELETE':
-        return deleteLesson(request, pk)
+        return deleteLesson(request)
