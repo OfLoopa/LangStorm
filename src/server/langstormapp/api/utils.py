@@ -116,9 +116,7 @@ def createDictionary(lesson: Lesson | None = None) -> QuerySet:
             lesson=lesson
         )
     else:
-        dictionary = Dictionary.objects.create(
-            lesson=""
-        )
+        dictionary = Dictionary.objects.create()
 
     return dictionary
 
@@ -157,9 +155,9 @@ def getDictionary(pk: int) -> dict[str, dict | list]:
     """
     dictionary = Dictionary.objects.get(id=pk)
     dict_words = [
-        Word.objects.get(
-            id=word_record.id
-        ) for word_record in list(
+        WordSerializer(Word.objects.get(
+            id=word_record.word_id
+        ), many=False).data for word_record in list(
             DictionaryRecord.objects.all().filter(
                 dictionary=dictionary
             )

@@ -91,7 +91,7 @@ def getDictionariesListAPI():
 
     :return: HTTP-response with JSON
     """
-    dictionaries = [DictionarySerializer(dictionary, many=False) for dictionary in list(getDictionariesList())]
+    dictionaries = [DictionarySerializer(dictionary, many=False).data for dictionary in list(getDictionariesList())]
     return Response(dictionaries)
 
 
@@ -130,13 +130,13 @@ def getDictionaryAPI(pk: int):
     return Response(dictionary)
 
 
-def addWordToDictionaryAPI(request):
+def addWordToDictionaryAPI(request, pk):
     """
     Add word to a dictionary
 
+    :param pk: dictionary primary key
     :param request: HTTP-PUT with JSON
     {
-        "dict_id": "",
         "word": {
             "english_writing": "",
             "translation": "",
@@ -147,40 +147,40 @@ def addWordToDictionaryAPI(request):
     :return: HTTP-response with dictionary record JSON
     """
     data = request.data
-    dict_record = addWordToDictionary(data['word'], data['dict_id'])
+    dict_record = addWordToDictionary(data['word'], pk)
 
     return Response(DictionaryRecordSerializer(dict_record, many=False).data)
 
 
-def deleteWordFromDictionaryAPI(request):
+def deleteWordFromDictionaryAPI(request, pk):
     """
     Delete word with given id from dictionary
 
+    :param pk: dictionary primary key
     :param request: HTTP-PUT with JSON
     {
-        "dict_id": "",
         "word_id": ""
     }
     :return: HTTP-Response
     """
     data = request.data
-    deleteWordFromDictionary(data['dict_id'], data['word_id'])
+    deleteWordFromDictionary(pk, data['word_id'])
     return Response('Word from dictionary was deleted!')
 
 
-def bindDictionaryAPI(request):
+def bindDictionaryAPI(request, pk):
     """
     Bind given lesson to dictionary
 
+    :param pk: dictionary primary key
     :param request: HTTP-PUT with JSON
     {
-        "dict_id": "",
         "lesson_id": ""
     }
     :return: HTTP-Response with dictionary instance JSON
     """
     data = request.data
-    dictionary = bindDictionary(data['dict_id'], data['lesson_id'])
+    dictionary = bindDictionary(pk, data['lesson_id'])
 
     return Response(DictionarySerializer(dictionary, many=False).data)
 
@@ -209,34 +209,55 @@ def getLessonsListAPI():
     return Response(serializer.data)
 
 
-def createLesson(request):
+def createLessonAPI(request):
+    """
+    Create a lesson card with given summary and dictionary
+
+    :param request: HTTP-Post with JSON
+    {
+        'summary': '',
+        'dict_id': 0
+    }
+    :return: HTTP-Response with lesson instance in JSON
+    """
     data = request.data
-    lesson = Lesson.objects.create(
-        summary=data["summary"]
-    )
-    if 'dict_id' in data.keys():
-        dictionary = Dictionary.objects.get(id=data["dict_id"])
-        serializer = DictionarySerializer(instance=dictionary, data={"lesson": lesson})
-        if serializer.is_valid():
-            serializer.save()
+    dictionary = getDictionaryInstance(data['dict_id'])
+    lesson = createLesson(data['summary'], dictionary[0])
 
     lesson_serializer = LessonSerializer(lesson, many=False)
     return Response(lesson_serializer.data)
 
 
-def getLessonDetail(pk):
-    lesson = Lesson.objects.get(id=pk)
-    lesson_serializer = LessonSerializer(lesson, many=False)
+def getLessonAPI(pk):
+    """
+    Get card with lesson information (summary, dictionary)
 
-    dictionary = Dictionary.objects.get(lesson=lesson)
-    lesson_dict = getDictionary(dictionary.id)
+    :param pk: lesson's primary key
+    :return: HTTP-Response with JSON
+    {"lesson":
+        {"id": 0, "summary": ""},
+    "dictionary":
+        {"dict_info":
+            {"id": 0, "lesson_id: ""},
+        "words":
+            [{"english_writing": "",
+            "translation": "",
+            "transcription": "",
+            "example": ""}]
+        }
+    }
+    """
+    lesson = getLesson(pk)
 
-    return Response({"lesson": lesson_serializer.data, "dictionary": lesson_dict})
+    return Response(lesson)
 
 
-def deleteLesson(pk):
-    lesson = Lesson.objects.get(id=pk)
-    dictionary = Dictionary.objects.get(lesson=lesson)
-    deleteDictionary(dictionary.id)
-    lesson.delete()
+def deleteLessonAPI(pk):
+    """
+    Delete lesson with given id
+
+    :param pk: lesson's primary key
+    :return: HTTP-Response
+    """
+    deleteLesson(pk)
     return Response('Lesson was deleted!')

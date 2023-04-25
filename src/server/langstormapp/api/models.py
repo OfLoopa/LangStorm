@@ -32,4 +32,4 @@ class DictionaryRecord(models.Model):
     word = models.ForeignKey(Word, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
-        return str(self.dictionary) + str(self.word)
+        return "dict id - " + str(self.dictionary) + "; word - " + str(self.word)

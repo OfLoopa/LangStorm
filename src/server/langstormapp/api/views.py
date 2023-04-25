@@ -5,7 +5,7 @@ from .utils_api import (
     updateWordAPI, deleteWordAPI, getDictionariesListAPI, createDictionaryAPI,
     getDictionaryAPI, addWordToDictionaryAPI, deleteWordFromDictionaryAPI,
     bindDictionaryAPI, deleteDictionaryAPI,
-    getLessonsListAPI, createLessonAPI, getLessonDetailAPI, deleteLessonAPI
+    getLessonsListAPI, createLessonAPI, getLessonAPI, deleteLessonAPI
 )
 
 
@@ -76,7 +76,6 @@ def getRoutes(request):
             'method': 'PUT',
             'body': {
                 'add word': {
-                    'dict_id': '',
                     'word': {
                         'english_writing': '',
                         'translation': '',
@@ -85,11 +84,9 @@ def getRoutes(request):
                     }
                 },
                 'delete word': {
-                    'dict_id': '',
                     'word_id': ''
                 },
                 'bind lesson': {
-                    'dict_id': '',
                     'lesson_id': '',
                 }
             },
@@ -115,17 +112,8 @@ def getRoutes(request):
             'Endpoint': '/lessons/',
             'method': 'POST',
             'body': {
-                'lesson': {
-                    'summary': ''
-                },
-                'words': [
-                    {
-                        'english_writing': '',
-                        'translation': '',
-                        'transcription': '',
-                        'example': ''
-                    }
-                ]
+                'summary': '',
+                'dict_id': ''
             },
             'description': 'Create a new lesson record',
         },
@@ -134,24 +122,6 @@ def getRoutes(request):
             'method': 'GET',
             'body': None,
             'description': 'Get a lesson info with date, summary and words',
-        },
-        {
-            'Endpoint': '/lessons/id',
-            'method': 'PUT',
-            'body': {
-                'lesson': {
-                    'summary': ''
-                },
-                'words': [
-                    {
-                        'english_writing': '',
-                        'translation': '',
-                        'transcription': '',
-                        'example': ''
-                    }
-                ]
-            },
-            'description': 'Update information in a lesson\'s card',
         },
         {
             'Endpoint': '/lessons/id',
@@ -205,11 +175,11 @@ def getDictionary(request, pk):
 
     if request.method == 'PUT':
         if 'word' in request.data.keys():
-            return addWordToDictionaryAPI(request)
+            return addWordToDictionaryAPI(request, pk)
         elif 'word_id' in request.data.keys():
-            return deleteWordFromDictionaryAPI(request)
+            return deleteWordFromDictionaryAPI(request, pk)
         elif 'lesson_id' in request.data.keys():
-            return bindDictionaryAPI(request)
+            return bindDictionaryAPI(request, pk)
 
     if request.method == 'DELETE':
         return deleteDictionaryAPI(pk)
@@ -222,14 +192,14 @@ def getLessons(request):
         return getLessonsListAPI()
 
     if request.method == 'POST':
-        return createLesson(request)
+        return createLessonAPI(request)
 
 
 @api_view(['GET', 'DELETE'])
-def getLesson(request):
+def getLesson(request, pk):
 
     if request.method == 'GET':
-        return getLessonDetail(request)
+        return getLessonAPI(pk)
 
     if request.method == 'DELETE':
-        return deleteLesson(request)
+        return deleteLessonAPI(pk)
