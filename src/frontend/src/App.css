@@ -8,10 +8,21 @@
   --color-dark: #1f2124;
   --color-gray: #677;
   --color-bg: #f3f6f9;
-  --color-light: #acb4bd;
+  --color-light: #8b939c;
   --color-lighter: #f9f9f9;
   --color-white: #fff;
   --color-border:#e0e3e6;
+}
+
+.light {
+  --color-main: #f68657;
+  --color-text: #383a3f;
+  --color-text-bg: #d6d1d1;
+  --color-bg-main: #93c47d;
+  --color-bg: #eeeeee;
+  --color-white: #fff;
+  --color-border:#252629;
+  --color-border-shadow: rgba(0, 0, 0, 0.1);
 }
 
 .dark {
@@ -52,18 +63,21 @@ a {
   width: 100%;
   height: 100vh;
   color: var(--color-text);
-  background-color: var(--color-bg);
+  background-color: var(--color-bg-main);
   display: flex;
   align-items: center;
 }
 
 .app {
+  display: flex;
+  flex-direction: column;
   width: 100%;
   max-width: 480px;
   height: 88vh;
   margin: 0 auto;
+  border-radius: 0.25rem;
   background-color: var(--color-white);
-  box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.05);
+  box-shadow: 1px 1px 6px var(--color-border-shadow);
   position: relative;
 }
 
@@ -73,7 +87,8 @@ a {
   padding: 16px;
   justify-content: space-between;
   background-color: var(--color-lighter);
-  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: 0.25rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .app-header h1 {
@@ -147,9 +162,14 @@ a {
   cursor: pointer;
 }
 
+.words-list-item:hover ~ p, h3 {
+  color: var(--color-text)
+}
+
 .words-list-item h3,
 .words-list-item p span {
   font-weight: 600;
+  color: var(--color-gray)
 }
 
 
@@ -192,6 +212,12 @@ a {
 =>  Note Styles
 ================================*/
 
+.word {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+}
+
 .word-header {
   display: flex;
   align-items: center;
@@ -227,7 +253,7 @@ a {
   border: none;
   padding: 16px 12px;
   width: 100%;
-  height: 70vh;
+  /*height: 70vh;*/
   resize: none;
   scrollbar-width: none; /* Firefox */
 }
@@ -240,4 +266,52 @@ a {
 
 .word textarea::-webkit-scrollbar {
   display: none;
+}
+
+.word-card-edit {
+  display: flex;
+  height: 50%;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.word-card-english, .word-card-translation {
+  width: 200px;
+  height: 80px;
+  margin: 0 20px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-border);
+  border-radius: 0.25rem;
+}
+
+.word-card-cover {
+  background-color: var(--color-gray);
+}
+
+.word-card-edit svg{
+  height: 32px;
+  width: 32px;
+  cursor: pointer;
+}
+
+.word-additional-info {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+}
+
+.word-transcription, .word-example {
+  display: flex;
+  flex-direction: column;
+  /*height: 100%;*/
+  margin: auto;
+  justify-content: center;
+  background-color: var(--color-light);
+}
+
+.word-card-edit textarea {
+  color: var(--color-text)
 }

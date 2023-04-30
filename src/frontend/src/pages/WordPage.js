@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { ReactComponent as ArrowLeft} from "../assets/chevron-left.svg";
+import { ReactComponent as TranslationButton} from "../assets/translation-arrow.svg";
 
 const WordPage = () => {
 
@@ -21,10 +22,10 @@ const WordPage = () => {
     }
 
     let createWord = async () => {
-        if (word.transcription === null) {
+        if (word.transcription === undefined) {
             word.transcription = ""
         }
-        if (word.example === null) {
+        if (word.example === undefined) {
             word.example = ""
         }
         fetch(`/api/words/`, {
@@ -61,10 +62,30 @@ const WordPage = () => {
             deleteWord()
         } else if (id !== 'new') {
             updateWord()
-        } else if (id === 'new' && word.english_writing !== null && word.translation !== null) {
-            createWord()
+        } else if (id === 'new' && word !== null) {
+            if (word.english_writing !== null && word.translation !== null) {
+                createWord()
+            }
         }
         navigate(`/`);
+    }
+
+    let showTranslation = () => {
+        let EnglishWord = document.querySelector('.word-card-english');
+        let EnglishWordCard = document.querySelector('.word-card-english > textarea');
+        let TranslationWord = document.querySelector('.word-card-translation');
+        let TranslationWordCard = document.querySelector('.word-card-translation > textarea');
+        if (EnglishWord.classList.contains('word-card-cover')) {
+            EnglishWord.classList.remove('word-card-cover');
+            EnglishWordCard.style.display = 'inline-block';
+            TranslationWord.classList.add('word-card-cover');
+            TranslationWordCard.style.display = 'none';
+        } else {
+            TranslationWord.classList.remove('word-card-cover');
+            TranslationWordCard.style.display = 'inline-block';
+            EnglishWord.classList.add('word-card-cover');
+            EnglishWordCard.style.display = 'none';
+        }
     }
 
     return (
@@ -83,8 +104,9 @@ const WordPage = () => {
                 <div className="word-card-english">
                     <textarea onChange={(e) => {setWord(word => ({ ...word, 'english_writing': e.target.value }))}} value={word?.english_writing}></textarea>
                 </div>
-                <div className="word-card-translation">
-                    <textarea onChange={(e) => {setWord(word => ({ ...word, 'translation': e.target.value }))}} value={word?.translation}></textarea>
+                <TranslationButton onClick={showTranslation} />
+                <div className="word-card-translation word-card-cover">
+                    <textarea style={{display: 'none'}} onChange={(e) => {setWord(word => ({ ...word, 'translation': e.target.value }))}} value={word?.translation}></textarea>
                 </div>
             </div>
             <div className="word-additional-info">
@@ -93,7 +115,7 @@ const WordPage = () => {
                     <textarea onChange={(e) => {setWord(word => ({ ...word, 'transcription': e.target.value }))}} value={word?.transcription}></textarea>
                 </div>
                 <div className="word-example">
-                    <p> Example:: </p>
+                    <p> Example: </p>
                     <textarea onChange={(e) => {setWord(word => ({ ...word, 'example': e.target.value }))}} value={word?.example}></textarea>
                 </div>
             </div>
