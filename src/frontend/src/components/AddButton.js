@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom'
 import { ReactComponent as AddIcon } from "../assets/add.svg";
 
 
-const AddButton = () => {
+const AddButton = ({link}) => {
     return (
-        <Link to="/word/new" className="floating-button">
+        <Link to={link} className="floating-button">
             <AddIcon />
         </Link>
     )

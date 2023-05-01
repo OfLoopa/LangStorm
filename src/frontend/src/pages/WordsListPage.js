@@ -27,7 +27,7 @@ const WordsListPage = () => {
                     <ListItem key={index} word={word} />
                 ))}
             </div>
-            <AddButton />
+            <AddButton link={"/word/new"}/>
         </div>
     )
 }

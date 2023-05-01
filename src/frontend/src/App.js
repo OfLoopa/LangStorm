@@ -1,12 +1,12 @@
 import './App.css';
 import Header from './components/Header.js';
-import WordsListPage from "./pages/WordsListPage.js";
 import {
   BrowserRouter as Router,
   Route,
   Routes
 } from "react-router-dom";
 import WordPage from "./pages/WordPage.js"
+import MainPage from "./pages/MainPage";
 
 function App() {
   return (
@@ -15,7 +15,7 @@ function App() {
           <div className="app">
             <Header />
             <Routes>
-              <Route path="/" element={<WordsListPage />} />
+              <Route path="/" element={<MainPage />} />
               <Route path="/word/:id" element={<WordPage />} />
             </Routes>
           </div>

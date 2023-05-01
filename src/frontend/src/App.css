@@ -72,13 +72,19 @@ a {
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 480px;
+  max-width: 1020px;
   height: 88vh;
   margin: 0 auto;
   border-radius: 0.25rem;
   background-color: var(--color-white);
   box-shadow: 1px 1px 6px var(--color-border-shadow);
   position: relative;
+}
+
+.main-page {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
 }
 
 .app-header {
@@ -117,6 +123,11 @@ a {
 
 
 /* NOTES STYLES */
+.words {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+}
 
 .words-header {
   display: flex;
@@ -188,7 +199,6 @@ a {
   font-size: 48px;
   position: absolute;
   bottom: 24px;
-  right: 16px;
   background: var(--color-main);
   border: none;
   width: 60px;
@@ -201,6 +211,13 @@ a {
   box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
 }
 
+.words:nth-child(1) > .floating-button {
+  right: 16px;
+}
+
+.words:nth-child(2) > .floating-button {
+  right: 526px;
+}
 
 .floating-button > svg {
   fill: var(--color-bg);
@@ -288,6 +305,8 @@ a {
 
 .word-card-cover {
   background-color: var(--color-gray);
+  box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
+  border: 0;
 }
 
 .word-card-edit svg{
