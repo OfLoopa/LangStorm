@@ -102,21 +102,21 @@ const WordPage = () => {
             </div>
             <div className="word-card-edit">
                 <div className="word-card-english">
-                    <textarea onChange={(e) => {setWord(word => ({ ...word, 'english_writing': e.target.value }))}} value={word?.english_writing}></textarea>
+                    <textarea placeholder="Введите слово на английском" onChange={(e) => {setWord(word => ({ ...word, 'english_writing': e.target.value }))}} value={word?.english_writing}></textarea>
                 </div>
                 <TranslationButton onClick={showTranslation} />
                 <div className="word-card-translation word-card-cover">
-                    <textarea style={{display: 'none'}} onChange={(e) => {setWord(word => ({ ...word, 'translation': e.target.value }))}} value={word?.translation}></textarea>
+                    <textarea placeholder="Введите перевод слова" style={{display: 'none'}} onChange={(e) => {setWord(word => ({ ...word, 'translation': e.target.value }))}} value={word?.translation}></textarea>
                 </div>
             </div>
             <div className="word-additional-info">
                 <div className="word-transcription">
                     <p> Transcription: </p>
-                    <textarea onChange={(e) => {setWord(word => ({ ...word, 'transcription': e.target.value }))}} value={word?.transcription}></textarea>
+                    <textarea placeholder="Введите транскрипцию слова (при наличии)" onChange={(e) => {setWord(word => ({ ...word, 'transcription': e.target.value }))}} value={word?.transcription}></textarea>
                 </div>
                 <div className="word-example">
                     <p> Example: </p>
-                    <textarea onChange={(e) => {setWord(word => ({ ...word, 'example': e.target.value }))}} value={word?.example}></textarea>
+                    <textarea placeholder="Введите пример с использованием слова (при наличии)" onChange={(e) => {setWord(word => ({ ...word, 'example': e.target.value }))}} value={word?.example}></textarea>
                 </div>
             </div>
         </div>

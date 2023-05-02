@@ -7,6 +7,8 @@ import {
 } from "react-router-dom";
 import WordPage from "./pages/WordPage.js"
 import MainPage from "./pages/MainPage";
+import LessonPage from "./pages/LessonPage";
+import WordsListPage from "./pages/WordsListPage";
 
 function App() {
   return (
@@ -15,8 +17,9 @@ function App() {
           <div className="app">
             <Header />
             <Routes>
-              <Route path="/" element={<MainPage />} />
+              <Route path="/" element={<WordsListPage />} />
               <Route path="/word/:id" element={<WordPage />} />
+              <Route path="/lesson/:id" element={<LessonPage />}/>
             </Routes>
           </div>
         </div>

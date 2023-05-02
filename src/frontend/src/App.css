@@ -266,13 +266,19 @@ a {
 }
 
 .word textarea {
-  background-color: var(--color-white);
+  background-color: var(--color-lighter);
   border: none;
   padding: 16px 12px;
   width: 100%;
+  height: 100%;
+  font-weight: 500;
+  font-size: 1.6rem;
+  text-align: center;
+  vertical-align: center;
   /*height: 70vh;*/
   resize: none;
   scrollbar-width: none; /* Firefox */
+  box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
 }
 
 .word textarea:active,
@@ -285,6 +291,11 @@ a {
   display: none;
 }
 
+.word textarea::placeholder {
+  color: var(--color-gray);
+  font-weight: 350;
+}
+
 .word-card-edit {
   display: flex;
   height: 50%;
@@ -294,17 +305,17 @@ a {
 }
 
 .word-card-english, .word-card-translation {
-  width: 200px;
-  height: 80px;
+  width: 350px;
+  height: 180px;
   margin: 0 20px;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--color-border);
+  border: 2px groove var(--color-main);
   border-radius: 0.25rem;
 }
 
 .word-card-cover {
-  background-color: var(--color-gray);
+  background-color: var(--color-main);
   box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
   border: 0;
 }
@@ -326,9 +337,21 @@ a {
   display: flex;
   flex-direction: column;
   /*height: 100%;*/
+  width: 600px;
+  height: 150px;
   margin: auto;
   justify-content: center;
+  border-radius: 0.25rem;
   background-color: var(--color-light);
+}
+
+.word-transcription > p:first-child, .word-example  > p:first-child {
+  border-radius: 0.25rem;
+  font-size: 2rem;
+  padding: 10px 0;
+  text-align: center;
+  font-weight: 600;
+  background-color: var(--color-main);
 }
 
 .word-card-edit textarea {
