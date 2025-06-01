@@ -57,17 +57,36 @@ const WordPage = () => {
         navigate(`/`);
     }
 
+    let isFormValid = () => {
+        return word && 
+               word.english_writing && 
+               word.english_writing.trim() !== "" && 
+               word.translation && 
+               word.translation.trim() !== "";
+    }
+
     let handleSubmit = () => {
         if (id !== 'new' && word.english_writing === "" && word.translation === "") {
             deleteWord()
         } else if (id !== 'new') {
-            updateWord()
-        } else if (id === 'new' && word !== null) {
-            if (word.english_writing !== null && word.translation !== null) {
-                createWord()
+            if (isFormValid()) {
+                updateWord()
+                navigate(`/`);
+            } else {
+                alert("Please fill in both English word and translation fields");
+                return;
             }
+        } else if (id === 'new' && word !== null) {
+            if (isFormValid()) {
+                createWord()
+                navigate(`/`);
+            } else {
+                alert("Please fill in both English word and translation fields");
+                return;
+            }
+        } else {
+            navigate(`/`);
         }
-        navigate(`/`);
     }
 
     let showTranslation = () => {
@@ -102,21 +121,40 @@ const WordPage = () => {
             </div>
             <div className="word-card-edit">
                 <div className="word-card-english">
-                    <textarea placeholder="Введите слово на английском" onChange={(e) => {setWord(word => ({ ...word, 'english_writing': e.target.value }))}} value={word?.english_writing}></textarea>
+                    <textarea 
+                        placeholder="Введите слово на английском" 
+                        required 
+                        onChange={(e) => {setWord(word => ({ ...word, 'english_writing': e.target.value }))}} 
+                        value={word?.english_writing || ''}
+                    ></textarea>
                 </div>
                 <TranslationButton onClick={showTranslation} />
                 <div className="word-card-translation word-card-cover">
-                    <textarea placeholder="Введите перевод слова" style={{display: 'none'}} onChange={(e) => {setWord(word => ({ ...word, 'translation': e.target.value }))}} value={word?.translation}></textarea>
+                    <textarea 
+                        placeholder="Введите перевод слова" 
+                        required 
+                        style={{display: 'none'}} 
+                        onChange={(e) => {setWord(word => ({ ...word, 'translation': e.target.value }))}} 
+                        value={word?.translation || ''}
+                    ></textarea>
                 </div>
             </div>
             <div className="word-additional-info">
                 <div className="word-transcription">
                     <p> Transcription: </p>
-                    <textarea placeholder="Введите транскрипцию слова (при наличии)" onChange={(e) => {setWord(word => ({ ...word, 'transcription': e.target.value }))}} value={word?.transcription}></textarea>
+                    <textarea 
+                        placeholder="Введите транскрипцию слова (при наличии)" 
+                        onChange={(e) => {setWord(word => ({ ...word, 'transcription': e.target.value }))}} 
+                        value={word?.transcription || ''}
+                    ></textarea>
                 </div>
                 <div className="word-example">
                     <p> Example: </p>
-                    <textarea placeholder="Введите пример с использованием слова (при наличии)" onChange={(e) => {setWord(word => ({ ...word, 'example': e.target.value }))}} value={word?.example}></textarea>
+                    <textarea 
+                        placeholder="Введите пример с использованием слова (при наличии)" 
+                        onChange={(e) => {setWord(word => ({ ...word, 'example': e.target.value }))}} 
+                        value={word?.example || ''}
+                    ></textarea>
                 </div>
             </div>
         </div>
