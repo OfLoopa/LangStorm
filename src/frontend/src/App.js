@@ -7,7 +7,7 @@ import {
 } from "react-router-dom";
 import WordPage from "./pages/WordPage.js"
 import MainPage from "./pages/MainPage";
-import LessonPage from "./pages/LessonPage";
+// import LessonPage from "./pages/LessonPage";
 import WordsListPage from "./pages/WordsListPage";
 
 function App() {
@@ -19,7 +19,7 @@ function App() {
             <Routes>
               <Route path="/" element={<WordsListPage />} />
               <Route path="/word/:id" element={<WordPage />} />
-              <Route path="/lesson/:id" element={<LessonPage />}/>
+              {/*<Route path="/lesson/:id" element={<LessonPage />}/>*/}
             </Routes>
           </div>
         </div>
